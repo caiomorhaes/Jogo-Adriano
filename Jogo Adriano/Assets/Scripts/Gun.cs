@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Gun : MonoBehaviour
 {
     public float lifeTime = 3f; // Tempo até a bala desaparecer
 
-    void start()
+    void Start()
     {
         Destroy(gameObject, lifeTime); // Destroi depois de um tempo
     }
