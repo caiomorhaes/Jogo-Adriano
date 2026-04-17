@@ -9,17 +9,29 @@ public class Pontuação : MonoBehaviour
     float tempo = 0f;
     public TextMeshProUGUI textotempo;
 
+    public TextMeshProUGUI vidaatual;
+
+    public PlayerStats playerStats;
+
     void Start()
     {
-        textoPontos.text = "Pontos: " + pontos;
+        if (playerStats == null)
+        {
+            playerStats = FindObjectOfType<PlayerStats>();
+        }
 
-        textotempo.text = "Tempo: " + tempo;
+        textoPontos.text = "Pontos: " + pontos;
+        textotempo.text = "Tempo: 0";
     }
 
-    
     void Update()
     {
         tempo += Time.deltaTime;
         textotempo.text = "Tempo: " + Mathf.FloorToInt(tempo);
+
+        if (playerStats != null)
+        {
+            vidaatual.text = "Vida: " + Mathf.FloorToInt(playerStats.currentHealth);
+        }
     }
 }

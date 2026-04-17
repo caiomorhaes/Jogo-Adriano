@@ -1,51 +1,54 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 
 public class PlayerStats : MonoBehaviour
 {
-    [Header("Base Stats")]
     public float baseHealth = 100f;
-    public float baseDamage = 10f;
-    public float baseMoveSpeed = 5f;
-    public float baseAttackSpeed = 1f;
-
-    [Header("Current Stats")]
     public float currentHealth;
 
-    private float bonusDamage = 0f;
-    private float bonusMoveSpeed = 0f;
-    private float bonusAttackSpeed = 0f;
-    private float bonusMaxHealth = 0f;
+    private PlayerMovement3D movement;
 
     private List<UpgradeData> activeUpgrades = new List<UpgradeData>();
+
     void Start()
     {
         currentHealth = baseHealth;
+        movement = GetComponent<PlayerMovement3D>();
     }
+
     public void ApplyUpgrade(UpgradeData upgrade)
     {
+        if (upgrade == null)
+        {
+            Debug.LogError("❌ Upgrade é NULL!");
+            return;
+        }
+
         activeUpgrades.Add(upgrade);
 
         switch (upgrade.type)
         {
             case UpgradeType.Damage:
-                bonusDamage += upgrade.value;
                 break;
 
             case UpgradeType.MoveSpeed:
-                bonusMoveSpeed += upgrade.value;
+                if (movement != null)
+                {
+                    movement.speed += upgrade.value;
+                    movement.speed = Mathf.Clamp(movement.speed, 0f, 20f);
+                    Debug.Log("🏃 Velocidade: " + movement.speed);
+                }
                 break;
 
             case UpgradeType.AttackSpeed:
-                bonusAttackSpeed += upgrade.value;
                 break;
 
             case UpgradeType.MaxHealth:
-                bonusMaxHealth += upgrade.value;
                 currentHealth += upgrade.value;
+                Debug.Log("❤️ Vida: " + currentHealth);
                 break;
         }
 
-        Debug.Log("Upgrade aplicado: " + upgrade.upgradeName);
+        Debug.Log("✅ Upgrade aplicado: " + upgrade.upgradeName);
     }
 }

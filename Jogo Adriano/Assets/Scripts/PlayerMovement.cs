@@ -14,16 +14,17 @@ public class PlayerMovement3D : MonoBehaviour
 
     void Update()
     {
-        // Input WASD
         float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
+        float z = Input.GetAxis("Vertical");
 
-        // Movimento no plano X e Z (3D)
-        movement = new Vector3(x, 0f, y);
+        movement = new Vector3(x, 0f, z).normalized;
     }
 
     void FixedUpdate()
     {
-        rb.linearVelocity = movement * speed;
+        Vector3 vel = movement * speed;
+        vel.y = rb.linearVelocity.y; // mant�m gravidade
+
+        rb.linearVelocity = vel;
     }
 }
