@@ -11,4 +11,11 @@ public class LevelSystem : MonoBehaviour
 
         playerStats.ApplyUpgrade(upgrades[0]);
     }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            LevelUp();
+        }
+    }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using static UpgradeData;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -19,7 +18,10 @@ public class PlayerStats : MonoBehaviour
     private float bonusMaxHealth = 0f;
 
     private List<UpgradeData> activeUpgrades = new List<UpgradeData>();
-
+    void Start()
+    {
+        currentHealth = baseHealth;
+    }
     public void ApplyUpgrade(UpgradeData upgrade)
     {
         activeUpgrades.Add(upgrade);
