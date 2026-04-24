@@ -7,7 +7,7 @@
 
 # Nome do jogo: Zombie Survivors
 
-## Nome do Grupo: 
+## Nome do Grupo: Os Sem Bug
 
 ## Integrantes: <a href="https://www.linkedin.com/in/caio-moraesdev/">Caio Moraes</a>, <a href="https://www.linkedin.com/in/nicolasbmoumdjian/">Nicolas Bologna</a>, <a href="https://www.linkedin.com/in/lucas-elinou-feitosa-0894703ba/">Lucas Elinou Feitosa</a>, <a href="https://www.linkedin.com/in/otavio-sanches-pierini-0b6993306/">Otavio Sanches</a>, <a href="https://www.linkedin.com/in/guilherme-montes-640a37367/">Guilherme da Silva Montes</a>.
 
