@@ -5,15 +5,16 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Guarda os atributos principais do player e centraliza vida, upgrades, morte e granada.
+/// </summary>
 public class PlayerStats : MonoBehaviour
 {
+    [Header("Vida")]
     public float baseHealth = 100f;
     public float currentHealth;
 
-    private PlayerMovement3D movement;
-
-    private List<UpgradeData> activeUpgrades = new List<UpgradeData>();
-
+    [Header("Ataque")]
     public int damage = 1;
 
     [Header("Granada")]
@@ -23,10 +24,16 @@ public class PlayerStats : MonoBehaviour
     public float grenadeSpeed = 16f;
     public GameObject grenadePrefab;
 
+    private PlayerMovement3D movement;
+    private List<UpgradeData> activeUpgrades = new List<UpgradeData>();
+
     private bool morreu;
     private GameObject telaMorte;
     private float proximaGranadaPermitida;
 
+    /// <summary>
+    /// Tempo restante para a próxima granada. A HUD usa isso para mostrar o cooldown.
+    /// </summary>
     public float GrenadeCooldownRemaining
     {
         get { return Mathf.Max(0f, proximaGranadaPermitida - Time.time); }
@@ -51,6 +58,9 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reduz a vida do player e chama a tela de morte quando chega a zero.
+    /// </summary>
     public void ReceberDano(float dano)
     {
         if (morreu || currentHealth <= 0f)
@@ -75,6 +85,9 @@ public class PlayerStats : MonoBehaviour
         MostrarTelaMorte();
     }
 
+    /// <summary>
+    /// Cria a tela de morte em runtime para garantir que ela exista mesmo se não estiver na cena.
+    /// </summary>
     void MostrarTelaMorte()
     {
         if (telaMorte != null)
@@ -127,6 +140,9 @@ public class PlayerStats : MonoBehaviour
         return canvas;
     }
 
+    /// <summary>
+    /// Mantém qualquer Canvas em Scale With Screen Size para a UI adaptar à resolução.
+    /// </summary>
     void ConfigurarCanvas(Canvas canvas)
     {
         CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
@@ -208,6 +224,9 @@ public class PlayerStats : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    /// <summary>
+    /// Tenta lançar uma granada no inimigo mais próximo, respeitando o cooldown.
+    /// </summary>
     void TentarArremessarGranada()
     {
         if (Time.time < proximaGranadaPermitida)
@@ -267,6 +286,9 @@ public class PlayerStats : MonoBehaviour
         projetil.Iniciar(alvo, grenadeDamage, grenadeRadius, grenadeSpeed);
     }
 
+    /// <summary>
+    /// Aplica o upgrade escolhido pelo jogador na tela de level up.
+    /// </summary>
     public void ApplyUpgrade(UpgradeData upgrade)
     {
         if (upgrade == null)
@@ -283,6 +305,7 @@ public class PlayerStats : MonoBehaviour
                 damage += (int)upgrade.value;
                 Debug.Log("Dano: " + damage);
                 break;
+
             case UpgradeType.MoveSpeed:
                 if (movement != null)
                 {

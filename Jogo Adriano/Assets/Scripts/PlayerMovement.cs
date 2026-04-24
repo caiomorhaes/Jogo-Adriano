@@ -1,7 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Movimento básico 3D do player usando Rigidbody.
+/// </summary>
 public class PlayerMovement3D : MonoBehaviour
 {
+    [Header("Movimento")]
     public float speed = 5f;
 
     private Rigidbody rb;
@@ -14,6 +18,7 @@ public class PlayerMovement3D : MonoBehaviour
 
     void Update()
     {
+        // Captura entrada no Update para não perder comandos entre frames de física.
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
@@ -22,8 +27,9 @@ public class PlayerMovement3D : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Aplica movimento no Rigidbody e preserva a velocidade vertical da gravidade.
         Vector3 vel = movement * speed;
-        vel.y = rb.linearVelocity.y; // mant�m gravidade
+        vel.y = rb.linearVelocity.y;
 
         rb.linearVelocity = vel;
     }

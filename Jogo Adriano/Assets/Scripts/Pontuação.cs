@@ -1,17 +1,22 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Atualiza os textos e indicadores da HUD principal: pontos, tempo, vida, XP e granada.
+/// </summary>
 public class Pontuação : MonoBehaviour
 {
-    int pontos = 0;
+    [Header("Pontos")]
     public TextMeshProUGUI textoPontos;
 
-    float tempo = 0f;
+    [Header("Tempo")]
     public TextMeshProUGUI textotempo;
 
+    [Header("Vida")]
     public TextMeshProUGUI vidaatual;
 
+    [Header("Referências de gameplay")]
     public PlayerStats playerStats;
     public LevelSystem levelSystem;
 
@@ -22,6 +27,9 @@ public class Pontuação : MonoBehaviour
     [Header("HUD Granada")]
     public TextMeshProUGUI grenadeStatusTexto;
     public Image grenadeKeyBackground;
+
+    private int pontos = 0;
+    private float tempo = 0f;
 
     void Start()
     {
@@ -67,6 +75,9 @@ public class Pontuação : MonoBehaviour
         AtualizarHudExtra();
     }
 
+    /// <summary>
+    /// Procura objetos reais da HUD na cena caso as referências não tenham sido preenchidas no Inspector.
+    /// </summary>
     void EncontrarReferenciasHudSeNecessario()
     {
         if (xpFill == null)
@@ -137,6 +148,7 @@ public class Pontuação : MonoBehaviour
 
         float cooldown = playerStats.GrenadeCooldownRemaining;
 
+        // Durante o cooldown, o texto compacto vira contador em segundos.
         if (cooldown > 0.05f)
         {
             grenadeStatusTexto.text = Mathf.CeilToInt(cooldown) + "s";

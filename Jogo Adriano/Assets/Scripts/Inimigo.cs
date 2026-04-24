@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Comportamento principal do inimigo: perseguição, vida escalável e dano por contato.
+/// </summary>
 public class InimigoVS : MonoBehaviour
 {
+    [Header("Alvo e movimento")]
     public Transform player;
     public float velocidade = 3f;
+
+    [Header("Vida atual")]
     public int vida = 2;
 
     [Header("Vida do inimigo")]
@@ -22,6 +28,7 @@ public class InimigoVS : MonoBehaviour
 
     void Start()
     {
+        // Inimigos que nascem mais tarde já entram com a vida escalada pelo tempo da partida.
         nivelVidaAplicado = CalcularNivelVidaAtual();
         vida = CalcularVidaPorNivel(nivelVidaAplicado);
     }
@@ -30,18 +37,22 @@ public class InimigoVS : MonoBehaviour
     {
         AtualizarVidaPeloTempo();
 
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
-        // Direcao ate o player
+        // Persegue o player em linha reta.
         Vector3 direcao = (player.position - transform.position).normalized;
-
-        // Move direto ate o player
         transform.position += direcao * velocidade * Time.deltaTime;
 
-        // Faz o inimigo olhar para o player (opcional)
+        // Mantém o inimigo visualmente apontado para o player.
         transform.LookAt(player);
     }
 
+    /// <summary>
+    /// Dobra/multiplica a vida dos inimigos vivos quando o tempo de dificuldade avança.
+    /// </summary>
     void AtualizarVidaPeloTempo()
     {
         int nivelAtual = CalcularNivelVidaAtual();
@@ -94,6 +105,9 @@ public class InimigoVS : MonoBehaviour
         TentarDarDano(other.gameObject);
     }
 
+    /// <summary>
+    /// Aplica dano ao player com intervalo, evitando dano a cada frame de contato.
+    /// </summary>
     void TentarDarDano(GameObject alvo)
     {
         if (Time.time < proximoDanoPermitido)
@@ -124,7 +138,9 @@ public class InimigoVS : MonoBehaviour
         return danoBase * Mathf.Pow(multiplicadorDano, aumentos);
     }
 
-    // Metodo chamado quando o inimigo recebe dano
+    /// <summary>
+    /// Recebe dano de balas, granadas e outros ataques do player.
+    /// </summary>
     public void ReceberDano(int dano)
     {
         vida -= dano;
@@ -137,7 +153,6 @@ public class InimigoVS : MonoBehaviour
         }
     }
 
-    // Destroi o inimigo quando a vida acaba
     void Morrer()
     {
         Debug.Log(gameObject.name + " morreu.");
