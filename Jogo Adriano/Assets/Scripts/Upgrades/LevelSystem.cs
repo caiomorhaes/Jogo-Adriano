@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class LevelSystem : MonoBehaviour
 {
     public UpgradeManager upgradeManager;
     public PlayerStats playerStats;
+    public UpgradeUI upgradeUI; // 🔥 IMPORTANTE
 
     [Header("XP")]
     public int xp = 0;
@@ -16,9 +18,23 @@ public class LevelSystem : MonoBehaviour
 
     private float timer = 0f;
 
+    private bool esperandoEscolha = false;
+    private List<UpgradeData> upgradesAtuais;
+
     void Update()
     {
-        // ⏱ XP PASSIVO (tempo)
+        // 🔒 BLOQUEIA TUDO enquanto escolhe upgrade
+        if (esperandoEscolha)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1)) EscolherUpgrade(0);
+            if (Input.GetKeyDown(KeyCode.Alpha2)) EscolherUpgrade(1);
+            if (Input.GetKeyDown(KeyCode.Alpha3)) EscolherUpgrade(2);
+            if (Input.GetKeyDown(KeyCode.Alpha4)) EscolherUpgrade(3);
+
+            return;
+        }
+
+        // ⏱ XP PASSIVO
         timer += Time.deltaTime;
 
         if (timer >= tempoParaGanharXP)
@@ -27,45 +43,57 @@ public class LevelSystem : MonoBehaviour
             GanharXP(xpPorTick);
         }
 
-        // ⭐ VERIFICA LEVEL UP
+        // ⭐ LEVEL UP
         if (xp >= xpParaProximoLevel)
         {
             xp -= xpParaProximoLevel;
             level++;
 
-            Debug.Log("🆙 LEVEL UP! Level: " + level);
+            Debug.Log("🆙 LEVEL UP!");
 
-            LevelUp();
+            esperandoEscolha = true;
 
-            // aumenta dificuldade (opcional)
-            xpParaProximoLevel += 5;
+            upgradesAtuais = upgradeManager.GetRandomUpgrades(4);
+
+            // 🔥 MOSTRA A HUD
+            if (upgradeUI != null)
+            {
+                upgradeUI.Mostrar(upgradesAtuais);
+            }
+            else
+            {
+                Debug.LogError("❌ UpgradeUI NÃO está conectado!");
+            }
+
+            Time.timeScale = 0f; // pausa o jogo
         }
     }
 
-    // 🔥 FUNÇÃO PRINCIPAL DE XP
     public void GanharXP(int quantidade)
     {
         xp += quantidade;
-        Debug.Log("⭐ XP: " + xp + "/" + xpParaProximoLevel);
+        Debug.Log("XP: " + xp + "/" + xpParaProximoLevel);
     }
 
-    // 🎁 APLICA UPGRADE
-    public void LevelUp()
+    public void EscolherUpgrade(int index)
     {
-        if (upgradeManager == null || playerStats == null)
+        if (upgradesAtuais == null || index >= upgradesAtuais.Count)
         {
-            Debug.LogError("❌ Referências não ligadas!");
+            Debug.LogError("❌ Escolha inválida");
             return;
         }
 
-        var upgrades = upgradeManager.GetRandomUpgrades(3);
+        playerStats.ApplyUpgrade(upgradesAtuais[index]);
 
-        if (upgrades == null || upgrades.Count == 0)
+        esperandoEscolha = false;
+        upgradesAtuais = null;
+
+        // 🔥 ESCONDE HUD
+        if (upgradeUI != null)
         {
-            Debug.LogError("❌ Nenhum upgrade disponível!");
-            return;
+            upgradeUI.Esconder();
         }
 
-        playerStats.ApplyUpgrade(upgrades[0]);
+        Time.timeScale = 1f; // volta o jogo
     }
 }
