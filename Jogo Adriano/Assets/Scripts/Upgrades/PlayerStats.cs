@@ -12,10 +12,13 @@ public class PlayerStats : MonoBehaviour
 
     public int damage = 1;
 
+    private Gun gun;
+
     void Start()
     {
         currentHealth = baseHealth;
         movement = GetComponent<PlayerMovement3D>();
+        gun = FindAnyObjectByType<Gun>();
     }
 
     public void ApplyUpgrade(UpgradeData upgrade)
@@ -44,6 +47,17 @@ public class PlayerStats : MonoBehaviour
                 break;
 
             case UpgradeType.AttackSpeed:
+                Debug.Log("⚡ Aplicando upgrade de velocidade de ataque...");
+                if (gun != null)
+                {
+                    Debug.Log("achei a arma");
+                    gun.intervaloTiro -= 0.1f;
+
+                    // 🔥 evita ficar absurdo (importante)
+                    gun.intervaloTiro = Mathf.Clamp(gun.intervaloTiro, 0.1f, 10f);
+
+                    Debug.Log("⚡ Intervalo de tiro: " + gun.intervaloTiro);
+                }
                 break;
 
             case UpgradeType.MaxHealth:

@@ -34,4 +34,13 @@ public class Pontuação : MonoBehaviour
             vidaatual.text = "Vida: " + Mathf.FloorToInt(playerStats.currentHealth);
         }
     }
+
+    public void AdicionarPontos(int quantidade)
+    {
+        pontos += quantidade;
+        textoPontos.text = "Pontos: " + pontos;
+
+        Debug.Log("🏆 Pontos: " + pontos);
+    }
+
 }

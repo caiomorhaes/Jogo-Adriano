@@ -5,12 +5,15 @@ public class LevelSystem : MonoBehaviour
 {
     public UpgradeManager upgradeManager;
     public PlayerStats playerStats;
-    public UpgradeUI upgradeUI; // 🔥 IMPORTANTE
+    public UpgradeUI upgradeUI;
 
     [Header("XP")]
     public int xp = 0;
     public int xpParaProximoLevel = 10;
     public int level = 1;
+
+    [Header("Progressão de XP")]
+    public int aumentoPorLevel = 5; // 🔥 NOVO
 
     [Header("Ganho de XP por tempo")]
     public float tempoParaGanharXP = 1f;
@@ -43,19 +46,18 @@ public class LevelSystem : MonoBehaviour
             GanharXP(xpPorTick);
         }
 
-        // ⭐ LEVEL UP
-        if (xp >= xpParaProximoLevel)
+        // ⭐ LEVEL UP (AGORA COM WHILE)
+        while (xp >= xpParaProximoLevel)
         {
             xp -= xpParaProximoLevel;
             level++;
 
-            Debug.Log("🆙 LEVEL UP!");
+            Debug.Log("🆙 LEVEL UP! Level: " + level);
 
             esperandoEscolha = true;
 
             upgradesAtuais = upgradeManager.GetRandomUpgrades(4);
 
-            // 🔥 MOSTRA A HUD
             if (upgradeUI != null)
             {
                 upgradeUI.Mostrar(upgradesAtuais);
@@ -65,7 +67,12 @@ public class LevelSystem : MonoBehaviour
                 Debug.LogError("❌ UpgradeUI NÃO está conectado!");
             }
 
-            Time.timeScale = 0f; // pausa o jogo
+            Time.timeScale = 0f;
+
+            // 🔥 AUMENTA XP NECESSÁRIO
+            xpParaProximoLevel += aumentoPorLevel;
+
+            break; // 🔥 IMPORTANTE: para não abrir várias HUDs
         }
     }
 
@@ -88,12 +95,11 @@ public class LevelSystem : MonoBehaviour
         esperandoEscolha = false;
         upgradesAtuais = null;
 
-        // 🔥 ESCONDE HUD
         if (upgradeUI != null)
         {
             upgradeUI.Esconder();
         }
 
-        Time.timeScale = 1f; // volta o jogo
+        Time.timeScale = 1f;
     }
 }

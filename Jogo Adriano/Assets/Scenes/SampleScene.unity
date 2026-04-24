@@ -154,6 +154,7 @@ MonoBehaviour:
   xp: 0
   xpParaProximoLevel: 10
   level: 1
+  aumentoPorLevel: 5
   tempoParaGanharXP: 1
   xpPorTick: 1
 --- !u!4 &40265350
@@ -2593,6 +2594,8 @@ MonoBehaviour:
   player: {fileID: 423302806}
   velocidade: 3
   vida: 2
+  xpDrop: 2
+  pontosDrop: 10
 --- !u!65 &994359592
 BoxCollider:
   m_ObjectHideFlags: 0
