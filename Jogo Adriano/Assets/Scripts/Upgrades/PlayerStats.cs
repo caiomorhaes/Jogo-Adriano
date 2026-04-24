@@ -10,6 +10,8 @@ public class PlayerStats : MonoBehaviour
 
     private List<UpgradeData> activeUpgrades = new List<UpgradeData>();
 
+    public int damage = 1;
+
     void Start()
     {
         currentHealth = baseHealth;
@@ -29,8 +31,9 @@ public class PlayerStats : MonoBehaviour
         switch (upgrade.type)
         {
             case UpgradeType.Damage:
+                damage += (int)upgrade.value;
+                Debug.Log("💥 Dano: " + damage);
                 break;
-
             case UpgradeType.MoveSpeed:
                 if (movement != null)
                 {

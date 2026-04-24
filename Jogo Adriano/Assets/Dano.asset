@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9345726080d96e845b69a82e279398f5, type: 3}
   m_Name: Dano
   m_EditorClassIdentifier: 
-  upgradeName: Dano + 10
+  upgradeName: Dano + 1
   type: 0
-  value: 10
+  value: 1
