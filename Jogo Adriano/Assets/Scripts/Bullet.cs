@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 
-/// <summary>
-/// Controla o ciclo de vida da bala e aplica dano ao inimigo atingido.
-/// </summary>
 public class Bullet : MonoBehaviour
 {
-    [Header("Configuração da bala")]
     public float lifeTime = 1000f;
     public int dano;
 
+    private Rigidbody rb;
+
     void Start()
     {
-        // A bala copia o dano atual do player no momento em que é criada.
+        rb = GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
         PlayerStats player = FindObjectOfType<PlayerStats>();
 
         if (player != null)
@@ -22,16 +26,15 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject, lifeTime);
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider other)
     {
-        // Evita que a própria bala machuque ou destrua no player.
-        if (collision.gameObject.CompareTag("Player"))
+        // ignora o player
+        if (other.CompareTag("Player"))
         {
             return;
         }
 
-        // Se o objeto atingido for um inimigo, aplica o dano configurado.
-        InimigoVS inimigo = collision.gameObject.GetComponent<InimigoVS>();
+        InimigoVS inimigo = other.GetComponent<InimigoVS>();
 
         if (inimigo != null)
         {

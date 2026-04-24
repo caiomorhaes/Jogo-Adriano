@@ -1,8 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
-
---- !u!1 &8267765896363894480
-
+--- !u!1 &675713060306239807
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10,14 +8,12 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-
-  - component: {fileID: 4396614583137433304}
-  - component: {fileID: 5807657666915364933}
-  - component: {fileID: 1728425602179841660}
-  - component: {fileID: 6998126248635007104}
-  - component: {fileID: 2628651355980758998}
-  - component: {fileID: 3759650527363059257}
-
+  - component: {fileID: 3767320857033719935}
+  - component: {fileID: 9020879080863271556}
+  - component: {fileID: 5986101237763078517}
+  - component: {fileID: 6007881938416383880}
+  - component: {fileID: 8333645213285609082}
+  - component: {fileID: 3455051912975207017}
   m_Layer: 6
   m_Name: inimigo
   m_TagString: Inimigo
@@ -25,46 +21,36 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
-
---- !u!4 &4396614583137433304
-
+--- !u!4 &3767320857033719935
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
-
+  m_GameObject: {fileID: 675713060306239807}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23.32, y: 20.48, z: -14.72}
+  m_LocalPosition: {x: 23.32, y: 1.3, z: -14.72}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-
---- !u!33 &5807657666915364933
-
+--- !u!33 &9020879080863271556
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
+  m_GameObject: {fileID: 675713060306239807}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &1728425602179841660
-
+--- !u!23 &5986101237763078517
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
-
+  m_GameObject: {fileID: 675713060306239807}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -103,17 +89,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
-
---- !u!65 &6998126248635007104
-
+--- !u!65 &6007881938416383880
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
-
+  m_GameObject: {fileID: 675713060306239807}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -128,17 +110,13 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
-
---- !u!114 &2628651355980758998
-
+--- !u!114 &8333645213285609082
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
-
+  m_GameObject: {fileID: 675713060306239807}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a482aab582052448ad885867ecbe743, type: 3}
@@ -147,7 +125,6 @@ MonoBehaviour:
   player: {fileID: 0}
   velocidade: 3
   vida: 2
-
   vidaBase: 2
   multiplicadorVida: 2
   intervaloAumentoVida: 60
@@ -155,16 +132,13 @@ MonoBehaviour:
   multiplicadorDano: 1.5
   intervaloAumentoDano: 15
   intervaloEntreDanos: 1
---- !u!54 &3759650527363059257
-
+--- !u!54 &3455051912975207017
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-
-  m_GameObject: {fileID: 8267765896363894480}
-
+  m_GameObject: {fileID: 675713060306239807}
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
@@ -174,9 +148,7 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-
     m_Bits: 0
-
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 8
@@ -186,6 +158,4 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-
   m_CollisionDetection: 0
-

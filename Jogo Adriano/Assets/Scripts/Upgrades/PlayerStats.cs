@@ -20,7 +20,7 @@ public class PlayerStats : MonoBehaviour
     private Gun gun;
 
     [Header("Granada")]
-    public float grenadeDamage = 100f;
+    public float grenadeDamage = 10f;
     public float grenadeRadius = 10f;
     public float grenadeCooldown = 5f;
     public float grenadeSpeed = 16f;
@@ -59,6 +59,11 @@ public class PlayerStats : MonoBehaviour
         {
             TentarArremessarGranada();
         }
+
+        if (currentHealth <= 0f)
+        {
+            Morrer();
+        }
     }
 
     /// <summary>
@@ -74,10 +79,6 @@ public class PlayerStats : MonoBehaviour
         currentHealth = Mathf.Max(currentHealth - dano, 0f);
         Debug.Log("Player tomou dano: " + dano + ". Vida atual: " + currentHealth);
 
-        if (currentHealth <= 0f)
-        {
-            Morrer();
-        }
     }
 
     void Morrer()
@@ -86,6 +87,7 @@ public class PlayerStats : MonoBehaviour
         currentHealth = 0f;
         Time.timeScale = 0f;
         MostrarTelaMorte();
+
     }
 
     /// <summary>

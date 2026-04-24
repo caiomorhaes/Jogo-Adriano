@@ -28,9 +28,12 @@ public class InimigoVS : MonoBehaviour
     private float proximoDanoPermitido;
     private int nivelVidaAplicado;
 
+    private PlayerStats playerStats;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        playerStats = FindAnyObjectByType<PlayerStats>();
 
         // Inimigos que nascem mais tarde já entram com vida escalada
         nivelVidaAplicado = CalcularNivelVidaAtual();
@@ -41,24 +44,34 @@ public class InimigoVS : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+        // Evita deslizar por impulso de colisão
+        rb.linearDamping = 999f;
+        rb.angularDamping = 999f;
     }
 
     void FixedUpdate()
     {
-        AtualizarVidaPeloTempo();
-
         if (player == null)
             return;
 
-        // Direção até o player
+        // Atualiza vida escalada pelo tempo
+        AtualizarVidaPeloTempo();
+
+        // Remove qualquer impulso de colisão
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        // Calcula direção até o player
         Vector3 direcao = (player.position - transform.position).normalized;
 
-        // Movimento usando física
+        // Move o inimigo em direção ao player
         Vector3 novaPosicao = transform.position + direcao * velocidade * Time.fixedDeltaTime;
         rb.MovePosition(novaPosicao);
 
-        // Rotaciona para olhar o player
+        // Faz o inimigo olhar para o player
         direcao.y = 0f;
+
         if (direcao != Vector3.zero)
         {
             rb.MoveRotation(Quaternion.LookRotation(direcao));
@@ -132,6 +145,12 @@ public class InimigoVS : MonoBehaviour
 
             Debug.Log("Inimigo causou dano: " + danoAtual);
 
+            if (playerStats != null)
+            {
+                playerStats.currentHealth -= danoAtual;
+                playerStats.ReceberDano(danoAtual);
+            }
+
             proximoDanoPermitido = Time.time + intervaloEntreDanos;
         }
     }
@@ -164,6 +183,7 @@ public class InimigoVS : MonoBehaviour
 
         // XP
         LevelSystem levelSystem = FindObjectOfType<LevelSystem>();
+
         if (levelSystem != null)
         {
             levelSystem.GanharXP(2);
@@ -171,6 +191,7 @@ public class InimigoVS : MonoBehaviour
 
         // Pontuação
         Pontuação pontuacao = FindObjectOfType<Pontuação>();
+
         if (pontuacao != null)
         {
             pontuacao.AdicionarPontos(10);

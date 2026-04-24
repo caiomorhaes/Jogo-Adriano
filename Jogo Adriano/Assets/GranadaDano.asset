@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9345726080d96e845b69a82e279398f5, type: 3}
   m_Name: GranadaDano
   m_EditorClassIdentifier: 
-  upgradeName: Granada dano + 50
+  upgradeName: Granada dano + 10
   type: 5
-  value: 50
+  value: 10
