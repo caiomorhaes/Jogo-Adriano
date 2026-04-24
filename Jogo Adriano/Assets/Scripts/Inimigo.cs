@@ -1,86 +1,45 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class InimigoVS : MonoBehaviour
 {
     public Transform player;
     public float velocidade = 3f;
     public int vida = 2;
-    public int xpDrop = 2;
-    public int pontosDrop = 10;
 
-    [Header("Dano no player")]
-    public float danoBase = 5f;
-    public float multiplicadorDano = 1.5f;
-    public float intervaloAumentoDano = 15f;
-    public float intervaloEntreDanos = 1f;
+    private Rigidbody rb;
 
-    private float proximoDanoPermitido;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
 
-    void Update()
+        // 🔧 Configuração recomendada
+        rb.useGravity = false; // mantém no plano (top-down)
+        rb.constraints = RigidbodyConstraints.FreezeRotation; // evita tombar
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+    }
+
+    void FixedUpdate()
     {
         if (player == null) return;
 
-        // Direcao ate o player
+        // Direção até o player
         Vector3 direcao = (player.position - transform.position).normalized;
 
-        // Move direto ate o player
-        transform.position += direcao * velocidade * Time.deltaTime;
+        // Movimento com física (não atravessa parede)
+        Vector3 novaPosicao = transform.position + direcao * velocidade * Time.fixedDeltaTime;
+        rb.MovePosition(novaPosicao);
 
-        // Faz o inimigo olhar para o player (opcional)
-        transform.LookAt(player);
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
-        TentarDarDano(collision.gameObject);
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        TentarDarDano(collision.gameObject);
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        TentarDarDano(other.gameObject);
-    }
-
-    void OnTriggerStay(Collider other)
-    {
-        TentarDarDano(other.gameObject);
-    }
-
-    void TentarDarDano(GameObject alvo)
-    {
-        if (Time.time < proximoDanoPermitido)
+        // Rotaciona para olhar o player
+        direcao.y = 0f;
+        if (direcao != Vector3.zero)
         {
-            return;
+            rb.MoveRotation(Quaternion.LookRotation(direcao));
         }
-
-        PlayerStats playerStats = alvo.GetComponentInParent<PlayerStats>();
-
-        if (playerStats == null)
-        {
-            return;
-        }
-
-        float danoAtual = CalcularDanoAtual();
-        playerStats.ReceberDano(danoAtual);
-        proximoDanoPermitido = Time.time + intervaloEntreDanos;
     }
 
-    float CalcularDanoAtual()
-    {
-        if (intervaloAumentoDano <= 0f)
-        {
-            return danoBase;
-        }
-
-        float aumentos = Mathf.Floor(Time.timeSinceLevelLoad / intervaloAumentoDano);
-        return danoBase * Mathf.Pow(multiplicadorDano, aumentos);
-    }
-
-    // Metodo chamado quando o inimigo recebe dano
+    // Recebe dano
     public void ReceberDano(int dano)
     {
         vida -= dano;
@@ -93,23 +52,23 @@ public class InimigoVS : MonoBehaviour
         }
     }
 
-    // Destroi o inimigo quando a vida acaba
+    // Morte
     void Morrer()
     {
         Debug.Log(gameObject.name + " morreu.");
 
-        // ⭐ XP
+        // XP
         LevelSystem levelSystem = FindObjectOfType<LevelSystem>();
         if (levelSystem != null)
         {
-            levelSystem.GanharXP(xpDrop);
+            levelSystem.GanharXP(2);
         }
 
-        // 🏆 PONTOS (usando seu sistema atual)
+        // Pontuação
         Pontuação pontuacao = FindObjectOfType<Pontuação>();
         if (pontuacao != null)
         {
-            pontuacao.AdicionarPontos(pontosDrop);
+            pontuacao.AdicionarPontos(10);
         }
 
         Destroy(gameObject);
