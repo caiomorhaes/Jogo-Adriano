@@ -16,13 +16,39 @@ public class PlayerStats : MonoBehaviour
 
     public int damage = 1;
 
+    [Header("Granada")]
+    public float grenadeDamage = 100f;
+    public float grenadeRadius = 10f;
+    public float grenadeCooldown = 5f;
+    public float grenadeSpeed = 16f;
+    public GameObject grenadePrefab;
+
     private bool morreu;
     private GameObject telaMorte;
+    private float proximaGranadaPermitida;
+
+    public float GrenadeCooldownRemaining
+    {
+        get { return Mathf.Max(0f, proximaGranadaPermitida - Time.time); }
+    }
 
     void Start()
     {
         currentHealth = baseHealth;
         movement = GetComponent<PlayerMovement3D>();
+    }
+
+    void Update()
+    {
+        if (morreu || Time.timeScale == 0f)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            TentarArremessarGranada();
+        }
     }
 
     public void ReceberDano(float dano)
@@ -63,6 +89,10 @@ public class PlayerStats : MonoBehaviour
         {
             canvas = CriarCanvas();
         }
+        else
+        {
+            ConfigurarCanvas(canvas);
+        }
 
         CriarEventSystemSeNecessario();
 
@@ -92,13 +122,28 @@ public class PlayerStats : MonoBehaviour
         GameObject canvasObject = new GameObject("Canvas", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Canvas canvas = canvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        ConfigurarCanvas(canvas);
 
-        CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
+        return canvas;
+    }
+
+    void ConfigurarCanvas(Canvas canvas)
+    {
+        CanvasScaler scaler = canvas.GetComponent<CanvasScaler>();
+
+        if (scaler == null)
+        {
+            scaler = canvas.gameObject.AddComponent<CanvasScaler>();
+        }
+
+        if (canvas.GetComponent<GraphicRaycaster>() == null)
+        {
+            canvas.gameObject.AddComponent<GraphicRaycaster>();
+        }
+
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920f, 1080f);
         scaler.matchWidthOrHeight = 0.5f;
-
-        return canvas;
     }
 
     void CriarEventSystemSeNecessario()
@@ -163,6 +208,65 @@ public class PlayerStats : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    void TentarArremessarGranada()
+    {
+        if (Time.time < proximaGranadaPermitida)
+        {
+            return;
+        }
+
+        Transform alvo = BuscarInimigoMaisProximo();
+
+        if (alvo == null)
+        {
+            return;
+        }
+
+        CriarGranada(alvo);
+        proximaGranadaPermitida = Time.time + grenadeCooldown;
+    }
+
+    Transform BuscarInimigoMaisProximo()
+    {
+        GameObject[] inimigos = GameObject.FindGameObjectsWithTag("Inimigo");
+        Transform maisProximo = null;
+        float menorDistancia = Mathf.Infinity;
+
+        foreach (GameObject inimigo in inimigos)
+        {
+            float distancia = Vector3.Distance(transform.position, inimigo.transform.position);
+
+            if (distancia < menorDistancia)
+            {
+                menorDistancia = distancia;
+                maisProximo = inimigo.transform;
+            }
+        }
+
+        return maisProximo;
+    }
+
+    void CriarGranada(Transform alvo)
+    {
+        if (grenadePrefab == null)
+        {
+            Debug.LogWarning("Prefab da granada nao esta configurado no PlayerStats.");
+            return;
+        }
+
+        Vector3 posicaoInicial = transform.position + Vector3.up * 1.2f;
+        GameObject granada = Instantiate(grenadePrefab, posicaoInicial, Quaternion.identity);
+
+        GrenadeProjectile projetil = granada.GetComponent<GrenadeProjectile>();
+
+        if (projetil == null)
+        {
+            projetil = granada.AddComponent<GrenadeProjectile>();
+        }
+
+        projetil.Iniciar(alvo, grenadeDamage, grenadeRadius, grenadeSpeed);
+    }
+
     public void ApplyUpgrade(UpgradeData upgrade)
     {
         if (upgrade == null)
@@ -194,6 +298,16 @@ public class PlayerStats : MonoBehaviour
             case UpgradeType.MaxHealth:
                 currentHealth += upgrade.value;
                 Debug.Log("Vida: " + currentHealth);
+                break;
+
+            case UpgradeType.GrenadeRadius:
+                grenadeRadius += upgrade.value;
+                Debug.Log("Raio da granada: " + grenadeRadius);
+                break;
+
+            case UpgradeType.GrenadeDamage:
+                grenadeDamage += upgrade.value;
+                Debug.Log("Dano da granada: " + grenadeDamage);
                 break;
         }
 

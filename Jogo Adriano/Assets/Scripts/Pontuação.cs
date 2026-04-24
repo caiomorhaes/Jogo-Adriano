@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Pontuação : MonoBehaviour
 {
@@ -12,26 +13,140 @@ public class Pontuação : MonoBehaviour
     public TextMeshProUGUI vidaatual;
 
     public PlayerStats playerStats;
+    public LevelSystem levelSystem;
+
+    [Header("HUD XP")]
+    public Image xpFill;
+    public TextMeshProUGUI xpTexto;
+
+    [Header("HUD Granada")]
+    public TextMeshProUGUI grenadeStatusTexto;
+    public Image grenadeKeyBackground;
 
     void Start()
     {
         if (playerStats == null)
         {
-            playerStats = FindObjectOfType<PlayerStats>();
+            playerStats = FindFirstObjectByType<PlayerStats>();
         }
 
-        textoPontos.text = "Pontos: " + pontos;
-        textotempo.text = "Tempo: 0";
+        if (levelSystem == null)
+        {
+            levelSystem = FindFirstObjectByType<LevelSystem>();
+        }
+
+        EncontrarReferenciasHudSeNecessario();
+
+        if (textoPontos != null)
+        {
+            textoPontos.text = "Pontos: " + pontos;
+        }
+
+        if (textotempo != null)
+        {
+            textotempo.text = "Tempo: 0";
+        }
+
+        AtualizarHudExtra();
     }
 
     void Update()
     {
         tempo += Time.deltaTime;
-        textotempo.text = "Tempo: " + Mathf.FloorToInt(tempo);
 
-        if (playerStats != null)
+        if (textotempo != null)
+        {
+            textotempo.text = "Tempo: " + Mathf.FloorToInt(tempo);
+        }
+
+        if (playerStats != null && vidaatual != null)
         {
             vidaatual.text = "Vida: " + Mathf.FloorToInt(playerStats.currentHealth);
         }
+
+        AtualizarHudExtra();
+    }
+
+    void EncontrarReferenciasHudSeNecessario()
+    {
+        if (xpFill == null)
+        {
+            GameObject fillObject = GameObject.Find("PreenchimentoXP");
+
+            if (fillObject != null)
+            {
+                xpFill = fillObject.GetComponent<Image>();
+            }
+        }
+
+        if (xpTexto == null)
+        {
+            GameObject textoObject = GameObject.Find("TextoXP");
+
+            if (textoObject != null)
+            {
+                xpTexto = textoObject.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (grenadeStatusTexto == null)
+        {
+            GameObject textoObject = GameObject.Find("TextoGranada");
+
+            if (textoObject != null)
+            {
+                grenadeStatusTexto = textoObject.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (grenadeKeyBackground == null)
+        {
+            GameObject keyObject = GameObject.Find("TeclaG");
+
+            if (keyObject != null)
+            {
+                grenadeKeyBackground = keyObject.GetComponent<Image>();
+            }
+        }
+    }
+
+    void AtualizarHudExtra()
+    {
+        AtualizarBarraXP();
+        AtualizarIndicadorGranada();
+    }
+
+    void AtualizarBarraXP()
+    {
+        if (xpFill == null || xpTexto == null || levelSystem == null)
+        {
+            return;
+        }
+
+        int xpNecessario = Mathf.Max(1, levelSystem.xpParaProximoLevel);
+        xpFill.fillAmount = Mathf.Clamp01((float)levelSystem.xp / xpNecessario);
+        xpTexto.text = "XP " + levelSystem.xp + "/" + xpNecessario;
+    }
+
+    void AtualizarIndicadorGranada()
+    {
+        if (playerStats == null || grenadeStatusTexto == null || grenadeKeyBackground == null)
+        {
+            return;
+        }
+
+        float cooldown = playerStats.GrenadeCooldownRemaining;
+
+        if (cooldown > 0.05f)
+        {
+            grenadeStatusTexto.text = Mathf.CeilToInt(cooldown) + "s";
+            grenadeStatusTexto.color = new Color(0.78f, 0.78f, 0.78f, 1f);
+            grenadeKeyBackground.color = new Color(0.18f, 0.18f, 0.18f, 0.72f);
+            return;
+        }
+
+        grenadeStatusTexto.text = "Granada";
+        grenadeStatusTexto.color = Color.white;
+        grenadeKeyBackground.color = new Color(0.12f, 0.12f, 0.12f, 0.82f);
     }
 }

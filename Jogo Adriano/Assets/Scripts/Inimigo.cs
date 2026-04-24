@@ -6,6 +6,11 @@ public class InimigoVS : MonoBehaviour
     public float velocidade = 3f;
     public int vida = 2;
 
+    [Header("Vida do inimigo")]
+    public int vidaBase = 2;
+    public float multiplicadorVida = 2f;
+    public float intervaloAumentoVida = 60f;
+
     [Header("Dano no player")]
     public float danoBase = 5f;
     public float multiplicadorDano = 1.5f;
@@ -13,9 +18,18 @@ public class InimigoVS : MonoBehaviour
     public float intervaloEntreDanos = 1f;
 
     private float proximoDanoPermitido;
+    private int nivelVidaAplicado;
+
+    void Start()
+    {
+        nivelVidaAplicado = CalcularNivelVidaAtual();
+        vida = CalcularVidaPorNivel(nivelVidaAplicado);
+    }
 
     void Update()
     {
+        AtualizarVidaPeloTempo();
+
         if (player == null) return;
 
         // Direcao ate o player
@@ -26,6 +40,38 @@ public class InimigoVS : MonoBehaviour
 
         // Faz o inimigo olhar para o player (opcional)
         transform.LookAt(player);
+    }
+
+    void AtualizarVidaPeloTempo()
+    {
+        int nivelAtual = CalcularNivelVidaAtual();
+
+        if (nivelAtual <= nivelVidaAplicado)
+        {
+            return;
+        }
+
+        float multiplicador = Mathf.Pow(Mathf.Max(1f, multiplicadorVida), nivelAtual - nivelVidaAplicado);
+        vida = Mathf.Max(1, Mathf.CeilToInt(vida * multiplicador));
+        nivelVidaAplicado = nivelAtual;
+
+        Debug.Log(gameObject.name + " teve a vida aumentada. Vida atual: " + vida);
+    }
+
+    int CalcularNivelVidaAtual()
+    {
+        if (intervaloAumentoVida <= 0f)
+        {
+            return 0;
+        }
+
+        return Mathf.FloorToInt(Time.timeSinceLevelLoad / intervaloAumentoVida);
+    }
+
+    int CalcularVidaPorNivel(int nivel)
+    {
+        float multiplicador = Mathf.Pow(Mathf.Max(1f, multiplicadorVida), nivel);
+        return Mathf.Max(1, Mathf.CeilToInt(vidaBase * multiplicador));
     }
 
     void OnCollisionEnter(Collision collision)

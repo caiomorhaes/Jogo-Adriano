@@ -5,7 +5,9 @@ public enum UpgradeType
     Damage,
     MoveSpeed,
     AttackSpeed,
-    MaxHealth
+    MaxHealth,
+    GrenadeRadius,
+    GrenadeDamage
 }
 
 [CreateAssetMenu(menuName = "Upgrades/Upgrade")]
