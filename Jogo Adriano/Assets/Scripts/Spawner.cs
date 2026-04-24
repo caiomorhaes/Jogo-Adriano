@@ -1,7 +1,11 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
+/// <summary>
+/// Spawner respons√°vel por criar inimigos ao redor do player e acelerar o ritmo com o tempo.
+/// </summary>
 public class SpawnerInimigos : MonoBehaviour
 {
+    [Header("Refer√™ncias")]
     public GameObject inimigoPrefab;
     public Transform player;
 
@@ -11,7 +15,7 @@ public class SpawnerInimigos : MonoBehaviour
     public float distanciaMax = 20f;
 
     [Header("Dificuldade")]
-    public float diminuirTempo = 0.05f; // spawn fica mais r·pido
+    public float diminuirTempo = 0.05f;
     public float tempoMinimo = 0.5f;
 
     private float timer;
@@ -25,7 +29,7 @@ public class SpawnerInimigos : MonoBehaviour
             SpawnarInimigo();
             timer = 0f;
 
-            // aumenta dificuldade com o tempo
+            // A cada spawn, reduz levemente o intervalo at√© chegar no limite m√≠nimo.
             if (tempoSpawn > tempoMinimo)
             {
                 tempoSpawn -= diminuirTempo;
@@ -33,18 +37,18 @@ public class SpawnerInimigos : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Escolhe um ponto aleat√≥rio ao redor do player e instancia um inimigo ali.
+    /// </summary>
     void SpawnarInimigo()
     {
-        // direÁ„o aleatÛria ao redor do player
         Vector2 direcao = Random.insideUnitCircle.normalized;
-
         float distancia = Random.Range(distanciaMin, distanciaMax);
-
         Vector3 posicaoSpawn = player.position + new Vector3(direcao.x, 0, direcao.y) * distancia;
 
         GameObject inimigo = Instantiate(inimigoPrefab, posicaoSpawn, Quaternion.identity);
 
-        // conecta o player no inimigo
+        // Conecta o player ao inimigo rec√©m-criado para ele saber quem perseguir.
         inimigo.GetComponent<InimigoVS>().player = player;
     }
 }

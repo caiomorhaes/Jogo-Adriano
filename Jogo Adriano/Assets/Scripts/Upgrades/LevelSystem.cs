@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Controla XP, level up e a escolha de upgrades pelo jogador.
+/// </summary>
 public class LevelSystem : MonoBehaviour
 {
+    [Header("Referências")]
     public UpgradeManager upgradeManager;
     public PlayerStats playerStats;
     public UpgradeUI upgradeUI;
@@ -20,13 +24,12 @@ public class LevelSystem : MonoBehaviour
     public int xpPorTick = 1;
 
     private float timer = 0f;
-
     private bool esperandoEscolha = false;
     private List<UpgradeData> upgradesAtuais;
 
     void Update()
     {
-        // 🔒 BLOQUEIA TUDO enquanto escolhe upgrade
+        // Enquanto a tela de upgrade está aberta, só aceita a escolha 1-4.
         if (esperandoEscolha)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1)) EscolherUpgrade(0);
@@ -37,7 +40,6 @@ public class LevelSystem : MonoBehaviour
             return;
         }
 
-        // ⏱ XP PASSIVO
         timer += Time.deltaTime;
 
         if (timer >= tempoParaGanharXP)
@@ -45,6 +47,7 @@ public class LevelSystem : MonoBehaviour
             timer = 0f;
             GanharXP(xpPorTick);
         }
+
 
         // ⭐ LEVEL UP (AGORA COM WHILE)
         while (xp >= xpParaProximoLevel)
@@ -82,11 +85,39 @@ public class LevelSystem : MonoBehaviour
         Debug.Log("XP: " + xp + "/" + xpParaProximoLevel);
     }
 
+    /// <summary>
+    /// Sorteia upgrades, mostra a tela de escolha e pausa o jogo.
+    /// </summary>
+    void SubirDeLevel()
+    {
+        xp -= xpParaProximoLevel;
+        level++;
+
+        Debug.Log("LEVEL UP!");
+
+        esperandoEscolha = true;
+        upgradesAtuais = upgradeManager.GetRandomUpgrades(4);
+
+        if (upgradeUI != null)
+        {
+            upgradeUI.Mostrar(upgradesAtuais);
+        }
+        else
+        {
+            Debug.LogError("UpgradeUI NÃO está conectado!");
+        }
+
+        Time.timeScale = 0f;
+    }
+
+    /// <summary>
+    /// Aplica o upgrade selecionado pelo jogador e retoma o jogo.
+    /// </summary>
     public void EscolherUpgrade(int index)
     {
         if (upgradesAtuais == null || index >= upgradesAtuais.Count)
         {
-            Debug.LogError("❌ Escolha inválida");
+            Debug.LogError("Escolha inválida");
             return;
         }
 

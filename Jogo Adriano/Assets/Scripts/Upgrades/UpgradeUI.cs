@@ -1,11 +1,17 @@
-using System.Collections.Generic;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
 
+/// <summary>
+/// Mostra a tela de upgrades e escreve as opções sorteadas para o jogador escolher.
+/// </summary>
 public class UpgradeUI : MonoBehaviour
 {
+    [Header("Painel de upgrade")]
     public GameObject panel;
     public TextMeshProUGUI[] textos;
+
+    [Header("HUD normal")]
     public GameObject hudnormal;
 
     public void Mostrar(List<UpgradeData> upgrades)

@@ -1,13 +1,19 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 
+/// <summary>
+/// Mant√©m a c√¢mera acompanhando o player com uma dist√¢ncia fixa.
+/// </summary>
 public class CameraFollow : MonoBehaviour
 {
-    public Transform player;     // ReferÍncia ao player
-    public Vector3 offset;       // Dist‚ncia da c‚mera em relaÁ„o ao player
+    [Header("Alvo")]
+    public Transform player;
+
+    [Header("Enquadramento")]
+    public Vector3 offset;
 
     void LateUpdate()
     {
-        // Move a c‚mera mantendo o offset
+        // LateUpdate roda depois do movimento do player, evitando tremidas na c√¢mera.
         transform.position = player.position + offset;
     }
 }
